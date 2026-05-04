@@ -1,4 +1,5 @@
 ---
+alwaysApply: true
 paths:
   - "Figures/**/*"
   - "Quarto/**/*.qmd"
