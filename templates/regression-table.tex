@@ -1,0 +1,138 @@
+%  regression-table.tex
+%  Publication-ready regression table template
+%  Compile standalone to test; include in manuscript with \input{}
+%  Companion: .claude/rules/manuscript-writing.md
+
+\documentclass[12pt]{article}
+
+%  Packages
+\usepackage{amsmath, amssymb, booktabs, graphicx, hyperref}
+\usepackage[notes, nosepaper]{natbib}
+
+%  Table formatting
+\usepackage{dcolumn}
+\newcolumntype{d}{D{.}{.}{-1}}  % decimal alignment
+
+%  Significance stars
+%  AER style: no stars, but * p<0.10 ** p<0.05 *** p<0.01
+%  Configure per journal: some journals suppress stars
+
+%  ============================================================
+%  BEGIN TABLE
+%  ============================================================
+\begin{table}[htbp]
+  \centering
+  \caption{\label{tab:main}Main Results: Effect of Treatment on Outcome}
+  \vspace{1ex}
+
+  %  Header row
+  \begin{tabular}{l d{3.3} d{3.3} d{3.3} d{3.3}}
+    \toprule
+    & \multicolumn{4}{c}{Dependent Variable: Y} \\
+    \cmidrule(lr){2-5}
+    & (1) & (2) & (3) & (4) \\
+    \midrule
+
+    %  Main coefficient row
+    Treatment &
+      0.045^{***} &
+      0.038^{**} &
+      0.032^{*} &
+      0.029 \\
+    &
+      (0.012) &
+      (0.015) &
+      (0.018) &
+      (0.019) \\
+
+    %  Additional coefficients (example)
+    Control Variable &
+      &
+      0.120^{**} &
+      0.115^{**} &
+      0.108^{**} \\
+    &
+      &
+      (0.048) &
+      (0.047) &
+      (0.046) \\
+
+    \midrule
+
+    %  Fixed effects
+    Unit FE &
+      \checkmark &
+      \checkmark &
+      \checkmark &
+      \checkmark \\[0.5ex]
+    Time FE &
+      &
+      &
+      \checkmark &
+      \checkmark \\[0.5ex]
+
+    %  N and other stats
+    Observations &
+      10{,}000 &
+      10{,}000 &
+      10{,}000 &
+      10{,}000 \\[0.5ex]
+    R-squared &
+      0.45 &
+      0.47 &
+      0.52 &
+      0.53 \\[0.5ex]
+    Dependent Variable Mean &
+      2.30 &
+      2.30 &
+      2.30 &
+      2.30 \\
+
+    \bottomrule
+  \end{tabular}
+
+  %  Notes
+  \vspace{1ex}
+  \parbox{5.5in}{%
+    \small
+    \notesize
+    \emph{Notes:} Standard errors in parentheses. %
+    Treatment is a binary indicator for [treatment definition]. %
+    All columns include unit fixed effects. %
+    Columns (3) and (4) include time fixed effects. %
+    Standard errors are clustered at the [cluster level]. %
+    $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.%
+  }
+
+\end{table}
+%  ============================================================
+%  END TABLE
+%  ============================================================
+
+%  ============================================================
+%  ALTERNATIVE: CLEANER VERSION (AER-READY)
+%  ============================================================
+\begin{table}[htbp]
+  \centering
+  \caption{\label{tab:main-aer}Effect of Treatment on Outcome (AER Format)}
+  \vspace{1ex}
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{4}{c}{Y} \\
+    \cmidrule(lr){2-5}
+    & (1) & (2) & (3) & (4) \\
+    \midrule
+    Treatment & 0.045*** & 0.038** & 0.032* & 0.029 \\
+              & (0.012) & (0.015) & (0.018) & (0.019) \\
+    \midrule
+    FE & Unit & Unit & Unit+Time & Unit+Time \\
+    N & 10,000 & 10,000 & 10,000 & 10,000 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{1ex}
+  \small
+  \emph{Notes:} This table reports OLS estimates. See text for details.
+\end{table}
+
+\endinput
+%  -- end regression-table.tex

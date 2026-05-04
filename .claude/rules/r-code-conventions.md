@@ -3,9 +3,18 @@ paths:
   - "**/*.R"
   - "Figures/**/*.R"
   - "scripts/**/*.R"
+  - "papers/**/figures/**/*.R"
 ---
 
-# R Code Standards
+# R Code Conventions
+
+> **NOTE:** R is used for **figures and robustness checks** in economics papers. Primary econometric analysis uses Stata per `.claude/rules/econometrics-standards.md` and `.claude/rules/stata-conventions.md`. This rule governs R code that supports the main analysis.
+>
+> **This rule applies when:** Writing R scripts for regression tables, robustness, or figure generation that accompany a Stata-based economics paper.
+>
+> **This rule does NOT apply when:** R is the primary analysis tool (use project-specific conventions instead).
+
+**Applies to:** All R scripts in `scripts/R/`, `Figures/**/*.R`, and `papers/[slug]/figures/` when used alongside Stata main analysis.
 
 **Standard:** Senior Principal Data Engineer + PhD researcher quality
 

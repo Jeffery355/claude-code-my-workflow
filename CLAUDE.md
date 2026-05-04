@@ -1,72 +1,94 @@
-# CLAUDE.MD -- Academic Project Development with Claude Code
+# CLAUDE.MD — Academic Economics Research Template
 
-<!-- HOW TO USE: Replace [BRACKETED PLACEHOLDERS] with your project info.
-     Customize Beamer environments and CSS classes for your theme.
-     Keep this file under ~150 lines — Claude loads it every session.
-     See the guide at docs/workflow-guide.html for full documentation. -->
-
-**Project:** [YOUR PROJECT NAME]
-**Institution:** [YOUR INSTITUTION]
+**Project:** Reusable template for empirical economics papers
+**Purpose:** Stata-based econometric analysis, journal-style manuscript writing, publication-ready tables/figures
 **Branch:** main
 
 ---
 
 ## Core Principles
 
-- **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
-- **Verify after** -- compile/render and confirm output at the end of every task
-- **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
-- **Quality gates** -- nothing ships below 80/100
-- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to [MEMORY.md](MEMORY.md)
+- **Plan first** — enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
+- **Verify after** — run audit-reproducibility and verify every numeric claim before committing
+- **Stata is source of truth** — all numerical results derive from Stata do-files; LaTeX manuscript is derived
+- **Quality gates** — nothing ships below 80/100
+- **[LEARN] tags** — when corrected, save `[LEARN:category] wrong → right` to [MEMORY.md](MEMORY.md)
 
 Cross-session context lives in [MEMORY.md](MEMORY.md); past plans, specs, and session logs are in [quality_reports/](quality_reports/).
+
+---
+
+## Three-Layer Architecture
+
+This template has three layers:
+
+| Layer | Purpose | Location |
+|---|---|---|
+| **Global rules** | Standards for ALL economics projects | `.claude/rules/` |
+| **Project configuration** | ONE file to configure a new paper | `PROJECT_BRIEF.md` (root) |
+| **Reusable templates** | Manuscripts, tables, do-files, checklists | `templates/`, `do-files/shared/` |
+
+See [NEW_ECON_PAPER_GUIDE.md](NEW_ECON_PAPER_GUIDE.md) for the full onboarding guide.
 
 ---
 
 ## Folder Structure
 
 ```
-[YOUR-PROJECT]/
-├── CLAUDE.MD                    # This file
-├── .claude/                     # Rules, skills, agents, hooks
-├── Bibliography_base.bib        # Centralized bibliography
-├── Figures/                     # Figures and images
-├── Preambles/header.tex         # LaTeX headers
-├── Slides/                      # Beamer .tex files
-├── Quarto/                      # RevealJS .qmd files + theme
-├── docs/                        # GitHub Pages (auto-generated)
-├── scripts/                     # Utility scripts + R code
-├── quality_reports/             # Plans, session logs, merge reports, decision records
-├── explorations/                # Research sandbox (see rules)
-├── templates/                   # Session log, quality report templates
-└── master_supporting_docs/      # Papers and existing slides
+[PROJECT]/
+├── PROJECT_BRIEF.md              # ONE config file per paper (fill this to start)
+├── NEW_ECON_PAPER_GUIDE.md       # Onboarding guide (read this first)
+├── CLAUDE.md                     # This file
+├── .claude/                      # Rules, skills, agents, hooks
+├── Bibliography_base.bib         # Centralized bibliography
+├── papers/                       # PRIMARY — one subdir per paper
+│   └── [slug]/
+│       ├── manuscript/           # LaTeX manuscript
+│       ├── tables/               # Regression tables (.tex)
+│       ├── figures/              # Figures (.pdf, .png)
+│       ├── do-files/             # Stata do-files
+│       ├── logs/                 # Stata .log files (gitignored)
+│       └── outputs/              # Saved results for audit (.dta, .ster)
+├── do-files/
+│   └── shared/                   # Shared Stata utilities
+├── templates/                    # Reusable templates
+├── scripts/                      # Utility scripts
+├── quality_reports/              # Plans, session logs, merge reports
+├── Slides/                       # (preserved) Lecture slides (Beamer)
+├── Quarto/                       # (preserved) Quarto slide decks
+└── explorations/                 # Research sandbox
 ```
+
+**Note:** `Slides/` and `Quarto/` are preserved for teaching materials. The primary artifact for economics papers is `papers/[slug]/`.
 
 ---
 
 ## Commands
 
 ```bash
-# LaTeX (3-pass, XeLaTeX only)
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
+# Stata — run full analysis pipeline
+stata -b do papers/[slug]/do-files/00_master.do
 
-# Deploy Quarto to GitHub Pages
-./scripts/sync_to_docs.sh LectureN
+# Stata — run specific do-file
+stata -b do papers/[slug]/do-files/03_regressions.do
 
-# Quality score
-python scripts/quality_score.py Quarto/file.qmd
+# LaTeX — compile manuscript (3-pass)
+cd papers/[slug]/manuscript
+pdflatex [slug].tex
+bibtex [slug]
+pdflatex [slug].tex
+pdflatex [slug].tex
 
-# Palette sync (LaTeX ↔ SCSS)
-./scripts/check-palette-sync.sh
+# Quality checks
+/audit-reproducibility papers/[slug]/manuscript/[slug].tex papers/[slug]/outputs/
+/verify-claims papers/[slug]/manuscript/[slug].tex
 
-# Surface-count sync (README ↔ CLAUDE.md ↔ guide ↔ landing page)
-./scripts/check-surface-sync.sh
+# Proofread
+/proofread papers/[slug]/manuscript/[slug].tex
+
+# Pre-submission
+# See templates/quality-checklist.md
 ```
-
-**Palette contract:** color names in `Preambles/header.tex` must match SCSS variables in `Quarto/theme-template.scss`. See [`Preambles/README.md`](Preambles/README.md).
 
 ---
 
@@ -86,63 +108,109 @@ Enforced by `/commit` (halts + asks for override); not enforced by a git pre-com
 
 | Command | What It Does |
 |---------|-------------|
-| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
-| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
-| `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
-| `/new-diagram [snippet] [output.tex]` | Scaffold a TikZ diagram from the gallery with prevention + review |
-| `/proofread [file]` | Grammar/typo/overflow review |
-| `/visual-audit [file]` | Slide layout audit |
-| `/pedagogy-review [file]` | Narrative, notation, pacing review |
-| `/review-r [file]` | R code quality review |
-| `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
-| `/slide-excellence [file]` | Combined multi-agent review |
-| `/translate-to-quarto [file]` | Beamer → Quarto translation |
-| `/validate-bib` | Cross-reference citations |
-| `/devils-advocate` | Challenge slide design |
-| `/create-lecture` | Full lecture creation |
-| `/commit [msg]` | Stage, commit, PR, merge |
-| `/lit-review [topic]` | Literature search + synthesis |
-| `/research-ideation [topic]` | Research questions + strategies |
-| `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review (single-pass / `--adversarial` / `--peer <journal>` simulated pipeline) |
+| `/init-econ-paper` | Scaffold new paper from PROJECT_BRIEF.md |
+| `/data-analysis --lang stata [goal]` | Stata analysis pipeline (default for economics) |
+| `/data-analysis --lang r [goal]` | R analysis pipeline |
+| `/review-paper [file]` | Manuscript review (single / --adversarial / --peer) |
+| `/seven-pass-review [file]` | Seven-pass adversarial manuscript review |
+| `/audit-reproducibility [manuscript] [outputs]` | Cross-check numeric claims vs Stata output |
+| `/verify-claims [file]` | Chain-of-Verification fact-check |
 | `/respond-to-referees [report] [manuscript]` | R&R cross-reference + response draft |
-| `/data-analysis [dataset]` | End-to-end R analysis |
-| `/audit-reproducibility [paper]` | Enforce replication tolerance thresholds on paper ↔ code |
+| `/lit-review [topic]` | Literature search + synthesis |
+| `/research-ideation [topic]` | Research question generation |
+| `/interview-me [topic]` | Interactive research interview |
+| `/preregister [--style osf\|aspredicted\|aea-rct]` | Draft preregistration document |
+| `/proofread [file]` | Grammar/typo/overflow review |
+| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex (for Beamer slides) |
+| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
+| `/slide-excellence [file]` | Combined multi-agent slide review |
+| `/validate-bib` | Cross-reference citations |
 | `/learn [skill-name]` | Extract discovery into persistent skill |
 | `/context-status` | Show session health + context usage |
-| `/deep-audit` | Repository-wide consistency audit |
-| `/permission-check` | Diagnose permission layers when prompts fire unexpectedly |
-| `/seven-pass-review` | Seven-pass adversarial manuscript review (parallel forked subagents) |
-| `/verify-claims [file]` | Chain-of-Verification fact-check (forked verifier, fresh context) |
-| `/checkpoint [topic]` | Save a structured state snapshot (active plan, decisions, file pointers, next actions) before stopping or handing off |
-| `/preregister [--style osf|aspredicted|aea-rct]` | Draft a preregistration document (OSF / AsPredicted / AEA RCT Registry) from a research spec |
+| `/commit [msg]` | Stage, commit, PR, merge |
 
 ---
 
-<!-- CUSTOMIZE: Replace placeholder rows ([your-env], [.your-class]) with your own.
-     Delete the rows marked "(example — delete)" once you've added yours. -->
+## Key Rules (Economics Papers)
 
-## Beamer Custom Environments
-
-| Environment | Effect | Use Case |
-| --- | --- | --- |
-| `[your-env]` | [Description] | [When to use] |
-| `keybox` | Gold background box | Key points *(example — delete)* |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions *(example — delete)* |
-
-## Quarto CSS Classes
-
-| Class | Effect | Use Case |
-| --- | --- | --- |
-| `[.your-class]` | [Description] | [When to use] |
-| `.smaller` | 85% font | Dense content *(example — delete)* |
-| `.positive` | Green bold | Good annotations *(example — delete)* |
+| Rule | Purpose |
+|---|---|
+| `.claude/rules/econometrics-standards.md` | DiD, IV, RDD, panel FE standards; SE clustering |
+| `.claude/rules/stata-conventions.md` | Do-file organization (00–07), header boilerplate |
+| `.claude/rules/manuscript-writing.md` | AER/QJE/JPE/ECMA paper structure |
+| `.claude/rules/single-source-of-truth.md` | Stata do-files are authoritative; LaTeX derives |
+| `.claude/rules/cross-artifact-review.md` | Stata ↔ LaTeX consistency |
+| `.claude/rules/literature-review-protocol.md` | Organize by mechanism, not by paper |
+| `.claude/rules/mechanism-analysis-protocol.md` | M→X→Y chain, direct measurement + interaction + falsification |
+| `.claude/rules/robustness-check-protocol.md` | Pre-registration, placebo tests, sensitivity analysis |
 
 ---
 
-## Current Project State
+## Stata Do-File Organization (Per Paper)
 
-| Lecture | Beamer | Quarto | Key Content |
-| --- | --- | --- | --- |
-| HelloWorld *(sample — delete when ready)* | `HelloWorld.tex` | `HelloWorld.qmd` | Minimal deck to verify setup |
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
+```
+[slug]/do-files/
+  00_master.do      # Sets globals, calls all do-files in order
+  01_clean.do        # Data import, cleaning, variable construction
+  02_descriptives.do # Summary statistics, balance tests
+  03_regressions.do  # Main regressions
+  04_tables.do        # Esttab/outreg table generation
+  05_figures.do       # Graph generation
+  06_robustness.do    # Robustness and placebo tests
+  07_mechanisms.do    # Mechanism analysis
+```
+
+Run full pipeline: `stata -b do papers/[slug]/do-files/00_master.do`
+
+---
+
+## Papers Directory Structure
+
+```
+papers/[slug]/
+├── manuscript/
+│   ├── [slug].tex      # Main manuscript
+│   └── abstract.tex    # Separate abstract file
+├── tables/
+│   ├── README.md        # Table index
+│   ├── T1_summary_stats.tex
+│   ├── T2_main_results.tex
+│   └── T3_heterogeneity.tex
+├── figures/
+│   ├── README.md        # Figure index
+│   ├── F1_event_study.pdf
+│   └── F2_placebo.pdf
+├── do-files/
+│   ├── 00_master.do
+│   ├── 01_clean.do
+│   └── ... (through 07)
+├── logs/               # .log files (gitignored)
+├── outputs/            # .dta, .ster files for audit
+└── README.md           # Paper-level overview
+```
+
+---
+
+## Global Rules Reference
+
+| Rule | What it covers |
+|---|---|
+| `econometrics-standards.md` | Panel FE, DiD, IV, RDD; SE clustering; multiple testing |
+| `stata-conventions.md` | Do-file numbering, header boilerplate, path globals, log management |
+| `manuscript-writing.md` | Abstract framework, intro structure, results, robustness, conclusion |
+| `literature-review-protocol.md` | Gap identification, citation standards, JEL codes |
+| `mechanism-analysis-protocol.md` | M→X→Y chain, mediation, falsification tests |
+| `robustness-check-protocol.md` | Pre-registration, placebo tests, RDD bandwidth, DiD event study |
+| `r-code-conventions.md` | R for figures/robustness only; Stata is primary |
+
+## References
+
+| Reference | What it contains |
+|---|---|
+| `econometrics-reference.md` | Stata commands (xtreg, ivreg2, rdrobust, csdid); code snippets |
+| `journal-profiles.md` | Calibration for peer review (AER, QJE, JPE, ECMA, ReStud) |
+
+---
+
+*For onboarding: see [NEW_ECON_PAPER_GUIDE.md](NEW_ECON_PAPER_GUIDE.md)*
+*For Stata command reference: see [econometrics-reference.md](.claude/references/econometrics-reference.md)*

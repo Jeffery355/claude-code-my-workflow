@@ -8,7 +8,20 @@ alwaysApply: false
 
 A paper is not an island. Its claims depend on the code that produced them. Reviewing the paper without reviewing the code is reviewing half the artifact.
 
-## The Dependency Graph
+## The Dependency Graph (Economics Papers)
+
+```
+papers/[slug]/manuscript/[slug].tex ──cites──> Table 2
+Table 2        ──from──> papers/[slug]/outputs/reg_main.dta
+reg_main.dta   ──by──> papers/[slug]/do-files/03_regressions.do
+03_regressions.do ──uses──> papers/[slug]/outputs/analysis_sample.dta
+analysis_sample.dta ──by──> papers/[slug]/do-files/01_clean.do
+01_clean.do    ──reads──> $DATADIR/raw_data.dta
+```
+
+A bug in `01_clean.do` invalidates Table 2. Reviewing `manuscript.tex` without touching the code misses this class of error entirely.
+
+## The Dependency Graph (R-based Projects)
 
 ```
 manuscript.tex ──cites──> Table 2
@@ -19,14 +32,17 @@ clean.rds      ──by──> scripts/R/02_clean.R
 02_clean.R     ──reads──> data/raw.csv
 ```
 
-A bug in `02_clean.R` invalidates Table 2. Reviewing `manuscript.tex` without touching the code misses this class of error entirely.
-
 ## When to apply
 
 Applies when `/review-paper` runs on a manuscript that references analysis scripts. Detection is **pattern-based** — if the manuscript has none of the signals below, no cross-artifact work happens (and `--no-cross-artifact` is a no-op). To force invocation on a paper without these detection signals, point `/review-paper` at a manuscript that `\input{}`s the script outputs, or invoke `/review-r` and `/audit-reproducibility` directly alongside `/review-paper`.
 
-Detection signals:
+Detection signals (Stata-based economics paper):
+- `\input{papers/[slug]/tables/...}` or `\input{tables/...}` in .tex
+- `%% source: do-files/03_regressions.do` comments
+- Numeric claims in text (ATT, coefficients, N, p-values) **combined with** a sibling `papers/[slug]/do-files/` directory
+- Table labels in the paper that match filenames under `papers/[slug]/outputs/` (e.g., `Table:main_ATT` ↔ `reg_main.dta`)
 
+Detection signals (R-based project):
 - `\input{scripts/R/...}` or `\input{tables/...}`
 - `%% source: scripts/R/03_analyze.R` comments
 - Numeric claims in text (ATT, coefficients, N, p-values) **combined with** a sibling `scripts/R/` / `scripts/stata/` / `scripts/python/` directory
@@ -48,13 +64,15 @@ Scan the manuscript for:
 
 Build a list of scripts that produced content in this paper.
 
-### 2. Auto-invoke `/review-r`
+### 2. Auto-invoke `/review-r` (R-based) or check do-file conventions (Stata-based)
 
 For each identified R script, launch `/review-r` in a forked subagent (`context: fork`). Save reports to `quality_reports/cross_artifact_[paper]/review_r_[script].md`.
 
+For each identified Stata do-file, verify it follows `.claude/rules/stata-conventions.md` (header boilerplate, log management, path globals). Record any violations but do not block.
+
 ### 3. Auto-invoke `/audit-reproducibility`
 
-Run `/audit-reproducibility $manuscript scripts/R/_outputs/` once. Save to `quality_reports/cross_artifact_[paper]/reproducibility.md`.
+Run `/audit-reproducibility $manuscript papers/[slug]/outputs/` (Stata) or `scripts/R/_outputs/` (R). Save to `quality_reports/cross_artifact_[paper]/reproducibility.md`.
 
 ### 4. Surface cross-artifact findings
 

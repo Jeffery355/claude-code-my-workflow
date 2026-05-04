@@ -1,15 +1,19 @@
 ---
 name: data-analysis
-description: End-to-end R data analysis pipeline — exploration → cleaning → regression → publication-ready tables and figures. Use when user says "analyze this dataset", "run a regression on X", "explore this CSV", "full analysis workflow", "get me summary stats and a regression", or points at a `.csv`/`.rds`/`.dta` and asks for empirical results. Produces numbered R scripts in `scripts/R/` and outputs to `scripts/R/_outputs/`.
-argument-hint: "[dataset path or description of analysis goal]"
+description: End-to-end data analysis pipeline — exploration → cleaning → regression → publication-ready tables and figures. Default: Stata for economics papers (--lang stata). Use --lang r for R workflow. Produces numbered scripts and outputs in papers/[slug]/do-files/ or scripts/R/. Use when user says "analyze this dataset", "run a regression on X", "explore this CSV", "full analysis workflow", "get me summary stats and a regression", or points at a dataset and asks for empirical results.
+argument-hint: "[dataset path or description of analysis goal] --lang [stata|r]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task", "Monitor"]
 ---
 
 # Data Analysis Workflow
 
-Run an end-to-end data analysis in R: load, explore, analyze, and produce publication-ready output.
+Run an end-to-end data analysis. **Default language is Stata** for economics papers. Use `--lang r` to produce R scripts instead.
 
-**Input:** `$ARGUMENTS` — a dataset path (e.g., `data/county_panel.csv`) or a description of the analysis goal (e.g., "regress wages on education with state fixed effects using CPS data").
+**Input:** `$ARGUMENTS` — dataset path + optional `--lang stata` or `--lang r`
+
+**Economics default:** When no `--lang` is specified, assume Stata for economics context unless the user has explicitly set R as primary. Check `PROJECT_BRIEF.md` in root — if it exists and specifies Stata, default to Stata.
+
+---
 
 ---
 

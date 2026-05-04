@@ -7,9 +7,28 @@ paths:
 
 # Single Source of Truth: Enforcement Protocol
 
-**The Beamer `.tex` file is the authoritative source for ALL content.** Everything else is derived.
+**For lecture slides:** The Beamer `.tex` file is the authoritative source for ALL content. Everything else is derived.
 
-## The SSOT Chain
+**For economics papers:** The Stata do-files in `papers/[slug]/do-files/` are the authoritative source for ALL numerical results. The LaTeX manuscript is derived from these.
+
+## The SSOT Chain (Economics Papers)
+
+```
+Stata Do-Files (SOURCE OF TRUTH)
+  ├── 00_master.do → [all subsequent do-files]
+  ├── outputs/*.dta   (saved regression results for audit)
+  ├── tables/*.tex    (derived — table numbers must match Stata)
+  └── figures/*.pdf   (derived — figure numbers must match Stata)
+
+Manuscript .tex (derived from do-files)
+  ├── tables/*.tex  (input{} from Stata output)
+  ├── figures/*.pdf  (included from Stata output)
+  └── outputs/*.dta  (referenced for audit-reproducibility)
+```
+
+**Critical:** Any discrepancy between a table cell in `.tex` and the corresponding Stata output is a bug. Fix the Stata code, not the manuscript.
+
+## The SSOT Chain (Lecture Slides)
 
 ```
 Beamer .tex (SOURCE OF TRUTH)
