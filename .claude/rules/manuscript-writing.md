@@ -1,3 +1,9 @@
+---
+paths:
+  - "papers/**/manuscript/**"
+  - "papers/**/manuscript/*.tex"
+---
+
 # Manuscript Writing Standards
 
 **Applies to:** All economics paper manuscripts in `papers/[slug]/manuscript/`.

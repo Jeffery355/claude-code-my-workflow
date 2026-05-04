@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Orchestrator Protocol: Contractor Mode
 
 **This rule describes the contract that skills implement.** The 6-step loop is a **pattern**, not a runtime — the harness does not run it automatically after plan approval. Specific skills (listed below) implement the pattern; others invoke parts of it. Users bridge the gap by invoking the right skill.

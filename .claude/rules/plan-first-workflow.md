@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Plan-First Workflow
 
 **For any non-trivial task, enter plan mode before writing code.**

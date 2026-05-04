@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Meta-Governance: This Repository's Dual Nature
 
 **This repository is BOTH a working project AND a template for others.**

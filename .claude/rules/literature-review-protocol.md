@@ -1,3 +1,12 @@
+---
+paths:
+  - "papers/**/manuscript/**"
+  - "papers/**/manuscript/*.tex"
+  - "**/lit-review/**"
+  - "Bibliography_base.bib"
+alwaysApply: false
+---
+
 # Literature Review Protocol
 
 **Applies to:** Literature review sections of all economics papers.

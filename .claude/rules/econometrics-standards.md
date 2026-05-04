@@ -1,3 +1,11 @@
+---
+paths:
+  - "**/*.do"
+  - "papers/**/do-files/**"
+  - "papers/**/outputs/**"
+  - "do-files/shared/**"
+---
+
 # Econometrics Standards
 
 **Applies to:** All empirical economics projects using Stata.

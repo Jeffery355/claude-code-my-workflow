@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.do"
+  - "papers/**/do-files/**"
+  - "do-files/shared/**"
+---
+
 # Stata Do-File Conventions
 
 **Applies to:** All Stata code in `papers/[slug]/do-files/` and `do-files/shared/`.

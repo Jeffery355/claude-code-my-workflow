@@ -1,3 +1,13 @@
+---
+paths:
+  - "papers/**/manuscript/**"
+  - "papers/**/do-files/07_mechanisms.do"
+  - "PROJECT_BRIEF.md"
+  - "**/*mechanism*"
+  - "**/*analysis*note*"
+alwaysApply: false
+---
+
 # Mechanism Analysis Protocol
 
 **Applies to:** Mechanism analysis sections in empirical economics papers.

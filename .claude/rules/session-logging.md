@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Session Logging
 
 **Location:** `quality_reports/session_logs/YYYY-MM-DD_description.md`

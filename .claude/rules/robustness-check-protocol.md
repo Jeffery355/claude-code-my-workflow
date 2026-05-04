@@ -1,3 +1,13 @@
+---
+paths:
+  - "papers/**/manuscript/**"
+  - "papers/**/do-files/06_robustness.do"
+  - "PROJECT_BRIEF.md"
+  - "**/*robustness*"
+  - "**/*sensitivity*"
+alwaysApply: false
+---
+
 # Robustness Check Protocol
 
 **Applies to:** Robustness and sensitivity analysis in all empirical economics papers.
